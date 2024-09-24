@@ -43,25 +43,57 @@
 
 // app.listen(PORT,()=>`app listening on ${PORT}`)
 
-const express = require('express')
-const app = express()
-const TOKEN=require('./middlware/token')
-const validation=require('./middlware/validation')
-const midddleware=[TOKEN,validation]
+// const express = require('express')
+// const app = express()
+// const TOKEN=require('./middlware/token')
+// const validation=require('./middlware/validation')
+// const midddleware=[TOKEN,validation]
 
-app.use(dategenerater)
+// app.use(dategenerater)
 
-app.get('/profile', midddleware, (req, res) => {
-    console.log('user logged');
-    res.send('<h1>success</h1>')
+// app.get('/profile', midddleware, (req, res) => {
+//     console.log('user logged');
+//     res.send('<h1>success</h1>')
+// })
+// app.get('/',(req,res)=>{
+//     console.log('home');
+//     res.send('<h1>home</h1>')
+// })
+
+// function dategenerater(req,res,next){
+//     console.log(new Date())
+//     next()
+// }
+// app.listen(4000) 
+
+const express=require ('express')
+const app=express()
+const multer =require('multer')
+const path=require('path')
+
+
+const storage=multer.diskStorage({
+    destination:(req,res,cB)=>{
+        cB(null,'images')
+    },
+    filename:(req,file,cb)=>{
+        console.log(file)
+        cb(null,Date.now()+path.extname(file.originalname))
+    }
 })
-app.get('/',(req,res)=>{
-    console.log('home');
-    res.send('<h1>home</h1>')
+
+const updaload=multer({storage:storage})
+
+app.set('view engine','ejs')
+
+app.get('/upload',(req,res)=>{
+    res.render('upload')
 })
 
-function dategenerater(req,res,next){
-    console.log(new Date())
-    next()
-}
-app.listen(4000) 
+app.post('/upload',updaload.single('image'),(req,res)=>{
+    res.send('image uploaded')
+})
+
+app.listen(3004)
+console.log('3004 is the port');
+
